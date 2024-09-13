@@ -26,17 +26,6 @@
                                 You may use this option to confirm the changes the plugin will make to your files by checking the log output.
                             </div>
                         </div>
-
-                        <div class="checkboxContainer checkboxContainer-withDescription">
-                            <label>
-                                <input is="emby-checkbox" type="checkbox" id="overwrite" />
-                                <span>Overwrite files</span>
-                            </label>
-                            <div class="fieldDescription checkboxFieldDescription">
-                                Checking this overwrite any files that exist at the new path when moving files.
-                                Unchecking this always skips these files leaving them in their original location.
-                            </div>
-                        </div>
                         
                         <div>
                             <button is="emby-button" type="submit" data-theme="b" class="raised button-submit block">
@@ -49,14 +38,13 @@
         </div>
         <script type="text/javascript">
             const MetadataOrganiserPluginConfig = {
-                pluginUniqueId: '5D5FAFD8-886C-442C-ADE9-7B5E39F908BD',
+                pluginUniqueId: '68210EB1-7275-40F6-9568-DF276A9F9A3B',
 
                 loadConfiguration: function () {
                     Dashboard.showLoadingMsg();
                     
                     ApiClient.getPluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId).then(function (config) {
                         document.getElementById('dryRun').checked = config.DryRun;
-                        document.getElementById('overwrite').checked = config.Overwrite;
                         
                         Dashboard.hideLoadingMsg();
                     });
@@ -67,7 +55,6 @@
 
                     ApiClient.getPluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId).then(function (config) {
                         config.DryRun = document.getElementById('dryRun').checked;
-                        config.Overwrite = document.getElementById('overwrite').checked;
 
                         ApiClient.updatePluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId, config).then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);

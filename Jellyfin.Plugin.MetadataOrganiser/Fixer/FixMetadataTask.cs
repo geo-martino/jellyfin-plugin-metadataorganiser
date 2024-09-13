@@ -47,9 +47,8 @@ public class FixMetadataTask : MetadataTask
         ArgumentNullException.ThrowIfNull(MetadataOrganiserPlugin.Instance?.Configuration);
 
         var dryRun = MetadataOrganiserPlugin.Instance.Configuration.DryRun;
-        var overwrite = MetadataOrganiserPlugin.Instance.Configuration.Overwrite;
 
-        _logger.LogInformation("{DryRun} {Overwrite}", dryRun, overwrite);
+        _logger.LogInformation("{DryRun}", dryRun);
         _logger.LogInformation("{EncoderPath} {ProbePath}", _encoder.EncoderPath, _encoder.ProbePath);
 
         progress.Report(100);
