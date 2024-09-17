@@ -23,7 +23,57 @@
                             </label>
                             <div class="fieldDescription checkboxFieldDescription">
                                 Executes a dry run which does not modify any files.
-                                You may use this option to confirm the changes the plugin will make to your files by checking the log output.
+                                You may use this option to confirm the changes the plugin will make to your files
+                                by checking the log output.
+                            </div>
+                        </div>
+
+                        <div class="checkboxContainer checkboxContainer-withDescription">
+                            <label>
+                                <input is="emby-checkbox" type="checkbox" id="force" />
+                                <span>Force process all files</span>
+                            </label>
+                            <div class="fieldDescription checkboxFieldDescription">
+                                Checking this will ignore the special tag assigned to each file that indicates whether 
+                                it has been processed and process all files regardless.
+                                Unchecking this will skip files which have this tag.
+                                This tag is always assigned to each file when this operation runs.
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label for="tagMapPath">Tag map path</label>
+                            <input type="text" id="tagMapPath" is="emby-input" />
+                            <div class="fieldDescription">
+                                Path to a JSON file containing a tag map in the form: <em>
+                                {
+                                    "TAG FIELD": {
+                                        "OLD VALUE": "NEW VALUE",
+                                        ...
+                                    },
+                                ...
+                                }</em>.
+                                This map is used to remap matching tag values with a new value.
+                                Defaults to <em>$CONFIG_DIR/metadata_map.json</em> if not given.
+                            </div>
+                        </div>
+
+                        <div class="inputContainer">
+                            <label for="dropStreamTags">Remove stream tags</label>
+                            <input type="text" id="dropStreamTags" is="emby-input" />
+                            <div class="fieldDescription">
+                                Drop these stream tags from all streams in the file.
+                                Separate tag names with commas e.g. <em>title, comment, description</em>.
+                            </div>
+                        </div>
+                        
+                        <div class="inputContainer">
+                            <label for="dropStreamTagsOnItemName">Remove stream tags only when item name is present</label>
+                            <input type="text" id="dropStreamTagsOnItemName" is="emby-input" />
+                            <div class="fieldDescription">
+                                If a stream tag from this list contains the item name (e.g. movie title or song title),
+                                drop the matching tag from the stream.
+                                Separate tag names with commas e.g. <em>title, comment, description</em>.
                             </div>
                         </div>
                         
@@ -45,6 +95,10 @@
                     
                     ApiClient.getPluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId).then(function (config) {
                         document.getElementById('dryRun').checked = config.DryRun;
+                        document.getElementById('force').checked = config.Force;
+                        document.getElementById('tagMapPath').value = config.TagMapPath;
+                        document.getElementById('dropStreamTags').value = config.DropStreamTags;
+                        document.getElementById('dropStreamTagsOnItemName').value = config.DropStreamTagsOnItemName;
                         
                         Dashboard.hideLoadingMsg();
                     });
@@ -55,6 +109,10 @@
 
                     ApiClient.getPluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId).then(function (config) {
                         config.DryRun = document.getElementById('dryRun').checked;
+                        config.Force = document.getElementById('force').checked;
+                        config.TagMapPath = document.getElementById('tagMapPath').value;
+                        config.DropStreamTags = document.getElementById('dropStreamTags').value;
+                        config.DropStreamTagsOnItemName = document.getElementById('dropStreamTagsOnItemName').value;
 
                         ApiClient.updatePluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId, config).then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);

@@ -2,7 +2,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Jellyfin.Plugin.MetadataOrganiser.Core;
+using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.TV;
+using MediaBrowser.Controller.MediaEncoding;
+using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Tags;
 
@@ -10,18 +13,24 @@ namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Tags;
 public class EpisodeTagExtractor : VideoTagExtractor<Episode>
 {
     /// <inheritdoc />
-    public override IEnumerable<KeyValuePair<string, string>> FormatTags(Episode item) => base.FormatTags(item)
+    public EpisodeTagExtractor(IMediaEncoder encoder, ILogger<TagExtractor<Episode>> logger) : base(encoder, logger)
+    {
+    }
+
+    /// <inheritdoc />
+    public override IEnumerable<KeyValuePair<string, string>> FormatTags(Episode item) => FormatTags(item as BaseItem)
         .Concat(new Dictionary<string, string?>
         {
             { "episode_number", item.IndexNumber?.ToString(CultureInfo.InvariantCulture) },
             {
                 "episode_total", item.Season?.Children?.OfType<Episode>()
-                    .Max(episode => episode.IndexNumber)?.ToString(CultureInfo.InvariantCulture)
+                    .Max(episode => episode.IndexNumber)?.ToString(CultureInfo.InvariantCulture) ?? "0"
             },
             { "season_number", item.ParentIndexNumber?.ToString(CultureInfo.InvariantCulture) },
             {
                 "season_total", item.Series?.Children?.OfType<Season>()
-                    .Max(season => season.IndexNumber)?.ToString(CultureInfo.InvariantCulture)
-            }
+                .Max(season => season.IndexNumber)?.ToString(CultureInfo.InvariantCulture) ?? "0"
+            },
+            { "series_title", item.Series?.Name },
         }.FilterNotNullOrEmpty());
 }

@@ -32,13 +32,13 @@ public class FixMetadataTask : MetadataTask
     }
 
     /// <inheritdoc />
-    public override string Name => "Fix metadata in Jellyfin's library";
+    public override string Name => "Fix library metadata";
 
     /// <inheritdoc />
     public override string Key => "FixMetadata";
 
     /// <inheritdoc />
-    public override string Description => "Fix metadata in Jellyfin's library incorrectly read from files.";
+    public override string Description => "Fix incorrectly parsed library metadata values.";
 
     /// <inheritdoc />
     public override Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)

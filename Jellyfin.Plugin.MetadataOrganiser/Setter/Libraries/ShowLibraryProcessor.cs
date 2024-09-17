@@ -13,15 +13,16 @@ using Microsoft.Extensions.Logging;
 namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Libraries;
 
 /// <inheritdoc />
-public class ShowLibraryProcessor : LibraryProcessor<Episode, EpisodeTagExtractor>
+public class ShowLibraryProcessor : LibraryProcessor<Episode, VideoTagExtractor<Episode>>
 {
     /// <inheritdoc cref="LibraryProcessor{Episode,EpisodeTagExtractor}"/>
     public ShowLibraryProcessor(
         ILibraryManager libraryManager,
         IMediaEncoder encoder,
         IConfigurationManager config,
-        ILogger<ShowLibraryProcessor> loggerProcessor)
-        : base(libraryManager, encoder, config, new EpisodeTagExtractor(), loggerProcessor)
+        ILogger<ShowLibraryProcessor> loggerProcessor,
+        ILogger<EpisodeTagExtractor> loggerExtractor)
+        : base(libraryManager, encoder, config, new EpisodeTagExtractor(encoder, loggerExtractor), loggerProcessor)
     {
     }
 
@@ -37,4 +38,7 @@ public class ShowLibraryProcessor : LibraryProcessor<Episode, EpisodeTagExtracto
             },
             Recursive = true
         }).OfType<Episode>().Where(episode => File.Exists(episode.Path));
+
+    /// <inheritdoc />
+    protected override string GetTagDropValue(Episode item) => item.Series?.Name ?? item.Name;
 }

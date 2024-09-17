@@ -4,13 +4,20 @@ using System.Linq;
 using Jellyfin.Data.Enums;
 using Jellyfin.Plugin.MetadataOrganiser.Core;
 using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.MediaEncoding;
+using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Tags;
 
 /// <inheritdoc />
-public abstract class VideoTagExtractor<T> : TagExtractor<T>
+public class VideoTagExtractor<T> : TagExtractor<T>
     where T : Video
 {
+    /// <inheritdoc />
+    public VideoTagExtractor(IMediaEncoder encoder, ILogger<TagExtractor<T>> logger) : base(encoder, logger)
+    {
+    }
+
     /// <inheritdoc />
     public override IEnumerable<KeyValuePair<string, string>> FormatTags(T item) => FormatTags(item as BaseItem)
         .Concat(FormatProviderIdTags(item, item.ProviderIds))

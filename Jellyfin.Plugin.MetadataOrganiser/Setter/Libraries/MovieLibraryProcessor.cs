@@ -13,15 +13,16 @@ using Movie = MediaBrowser.Controller.Entities.Movies.Movie;
 namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Libraries;
 
 /// <inheritdoc />
-public class MovieLibraryProcessor : LibraryProcessor<Movie, MovieTagExtractor>
+public class MovieLibraryProcessor : LibraryProcessor<Movie, VideoTagExtractor<Movie>>
 {
     /// <inheritdoc cref="LibraryProcessor{Movie,MovieTagExtractor}"/>
     public MovieLibraryProcessor(
         ILibraryManager libraryManager,
         IMediaEncoder encoder,
         IConfigurationManager config,
-        ILogger<MovieLibraryProcessor> loggerProcessor)
-        : base(libraryManager, encoder, config, new MovieTagExtractor(), loggerProcessor)
+        ILogger<MovieLibraryProcessor> loggerProcessor,
+        ILogger<VideoTagExtractor<Movie>> loggerExtractor)
+        : base(libraryManager, encoder, config, new VideoTagExtractor<Movie>(encoder, loggerExtractor), loggerProcessor)
     {
     }
 
@@ -37,4 +38,7 @@ public class MovieLibraryProcessor : LibraryProcessor<Movie, MovieTagExtractor>
             },
             Recursive = true
         }).OfType<Movie>().Where(movie => File.Exists(movie.Path));
+
+    /// <inheritdoc />
+    protected override string GetTagDropValue(Movie item) => item.Name;
 }
