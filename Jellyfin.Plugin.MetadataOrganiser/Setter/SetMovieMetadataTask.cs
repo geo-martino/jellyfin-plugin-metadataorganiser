@@ -69,7 +69,7 @@ public class SetMovieMetadataTask : MetadataTask
         var dropStreamTagsOnName = MetadataOrganiserPlugin.Instance.Configuration.DropStreamTagsOnItemName
             .SplitArguments().ToArray();
 
-        var progressHandler = new ProgressHandler(progress, 5, 95);
+        var progressHandler = new ProgressHandler(progress, 5, 100);
         await _libraryProcessor.SetMetadata(
             dropStreamTags,
             dropStreamTagsOnName,

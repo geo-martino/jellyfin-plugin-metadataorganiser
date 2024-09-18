@@ -134,8 +134,16 @@ public abstract class LibraryProcessor<TItem, TExtractor>
                 continue;
             }
 
-            await SetMetadataOnItem(it.Item, dropStreamTags, dropStreamTagsOnValue, tagMap, dryRun, cancellationToken)
-                .ConfigureAwait(false);
+            try
+            {
+                await SetMetadataOnItem(
+                        it.Item, dropStreamTags, dropStreamTagsOnValue, tagMap, dryRun,  cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Failed to set metadata for item {Item}", it.Item);
+            }
         }
 
         progressHandler.SetProgressToFinal();
