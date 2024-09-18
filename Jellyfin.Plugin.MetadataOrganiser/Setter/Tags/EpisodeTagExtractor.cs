@@ -31,6 +31,6 @@ public class EpisodeTagExtractor : VideoTagExtractor<Episode>
                 "season_total", item.Series?.Children?.OfType<Season>()
                 .Max(season => season.IndexNumber)?.ToString(CultureInfo.InvariantCulture) ?? "0"
             },
-            { "series_title", item.Series?.Name },
+            { "show", item.Series?.Name },
         }.FilterNotNullOrEmpty());
 }
