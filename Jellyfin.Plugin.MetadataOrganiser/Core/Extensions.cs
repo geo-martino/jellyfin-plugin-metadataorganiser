@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,15 @@ namespace Jellyfin.Plugin.MetadataOrganiser.Core;
 /// </summary>
 public static class Extensions
 {
+    /// <summary>
+    /// Split the given values with the given separator.
+    /// </summary>
+    /// <param name="values">The values to split.</param>
+    /// <param name="separator">The separator to split with..</param>
+    /// <returns>The separated values.</returns>
+    public static string[] SeparateValues(this IEnumerable<string> values, string separator) => values
+        .SelectMany(value => value.Split(separator)).ToArray();
+
     /// <summary>
     /// Split and trim arguments given in a comma-delimited string.
     /// </summary>

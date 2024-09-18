@@ -31,4 +31,9 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets a value indicating which stream tags to remove only if they contain the item name.
     /// </summary>
     public string DropStreamTagsOnItemName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets a value for the tag separator to use to split tag values up in Jellyfin's library.
+    /// </summary>
+    public string TagSeparator { get; set; } = string.Empty;
 }

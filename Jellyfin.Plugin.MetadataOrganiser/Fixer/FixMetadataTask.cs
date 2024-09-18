@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Plugin.MetadataOrganiser.Core;
 using MediaBrowser.Controller.Library;
-using MediaBrowser.Controller.MediaEncoding;
 using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.MetadataOrganiser.Fixer;
@@ -11,24 +10,20 @@ namespace Jellyfin.Plugin.MetadataOrganiser.Fixer;
 /// <inheritdoc />
 public class FixMetadataTask : MetadataTask
 {
-    private readonly ILibraryManager _libraryManager;
-    private readonly IMediaEncoder _encoder;
-    private readonly ILogger<FixMetadataTask> _logger;
+    private readonly LibraryProcessor _libraryProcessor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FixMetadataTask"/> class.
     /// </summary>
     /// <param name="libraryManager">Instance of the <see cref="ILibraryManager"/> interface.</param>
-    /// <param name="encoder">Instance of the <see cref="IMediaEncoder"/> interface.</param>
-    /// <param name="logger">Instance of the <see cref="ILogger{FixMetadataTask}"/> interface.</param>
+    /// <param name="loggerFactory">Instance of the <see cref="ILoggerFactory"/> interface.</param>
     public FixMetadataTask(
         ILibraryManager libraryManager,
-        IMediaEncoder encoder,
-        ILogger<FixMetadataTask> logger)
+        ILoggerFactory loggerFactory)
     {
-        _libraryManager = libraryManager;
-        _encoder = encoder;
-        _logger = logger;
+        var loggerProcessor = loggerFactory.CreateLogger<LibraryProcessor>();
+
+        _libraryProcessor = new LibraryProcessor(libraryManager, loggerProcessor);
     }
 
     /// <inheritdoc />
@@ -41,17 +36,18 @@ public class FixMetadataTask : MetadataTask
     public override string Description => "Fix incorrectly parsed library metadata values.";
 
     /// <inheritdoc />
-    public override Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
+    public override async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken)
     {
         progress.Report(0);
         ArgumentNullException.ThrowIfNull(MetadataOrganiserPlugin.Instance?.Configuration);
 
-        var dryRun = MetadataOrganiserPlugin.Instance.Configuration.DryRun;
+        var separator = MetadataOrganiserPlugin.Instance.Configuration.TagSeparator;
+        var progressHandler = new ProgressHandler(progress, 5, 100);
 
-        _logger.LogInformation("{DryRun}", dryRun);
-        _logger.LogInformation("{EncoderPath} {ProbePath}", _encoder.EncoderPath, _encoder.ProbePath);
+        await _libraryProcessor
+            .SplitStringsOnSeparator(separator, progressHandler, cancellationToken)
+            .ConfigureAwait(false);
 
         progress.Report(100);
-        return Task.CompletedTask;
     }
 }

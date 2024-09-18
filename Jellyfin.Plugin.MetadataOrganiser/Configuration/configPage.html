@@ -76,6 +76,26 @@
                                 Separate tag names with commas e.g. <em>title, comment, description</em>.
                             </div>
                         </div>
+
+                        <div class="sectionTitleContainer flex align-items-center">
+                            <h2 class="sectionTitle">Fix Jellyfin library</h2>
+                        </div>
+                        <div class="verticalSection">
+                            These settings only affect Jellyfin's library. They do not affect file metadata.
+                        </div>
+                        <br>
+                       
+                        <div class="inputContainer">
+                            <label for="tagSeparator">Tag separator</label>
+                            <input type="text" id="tagSeparator" is="emby-input" />
+                            <div class="fieldDescription">
+                                Fixes Jellyfin library values by splitting stored tags values 
+                                that should be arrays on this following separator.
+                                e.g. If genres have been read as a single genre "rock;pop;jazz", 
+                                you may set the separator to ";" to separate these out into "rock", "pop", and "jazz".
+                                Leave blank to disable.
+                            </div>
+                        </div>
                         
                         <div>
                             <button is="emby-button" type="submit" data-theme="b" class="raised button-submit block">
@@ -100,6 +120,8 @@
                         document.getElementById('dropStreamTags').value = config.DropStreamTags;
                         document.getElementById('dropStreamTagsOnItemName').value = config.DropStreamTagsOnItemName;
                         
+                        document.getElementById('tagSeparator').value = config.TagSeparator;
+                        
                         Dashboard.hideLoadingMsg();
                     });
                 },
@@ -113,6 +135,8 @@
                         config.TagMapPath = document.getElementById('tagMapPath').value;
                         config.DropStreamTags = document.getElementById('dropStreamTags').value;
                         config.DropStreamTagsOnItemName = document.getElementById('dropStreamTagsOnItemName').value;
+                        
+                        config.TagSeparator = document.getElementById('tagSeparator').value;
 
                         ApiClient.updatePluginConfiguration(MetadataOrganiserPluginConfig.pluginUniqueId, config).then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
