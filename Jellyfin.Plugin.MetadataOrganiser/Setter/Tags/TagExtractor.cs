@@ -188,7 +188,7 @@ public abstract class TagExtractor<TItem>
         var output = ExtractEntriesFromFile(item, "format_tags");
         var deserialized = JsonSerializer.Deserialize<
             Dictionary<string, Dictionary<string, Dictionary<string, string>>>>(output, _jsonSerializerOptions);
-        return deserialized?["format"]["tags"];
+        return deserialized?.GetValueOrDefault("format")?.GetValueOrDefault("tags");
     }
 
     private List<StreamTags>? ExtractStreamTagsFromFile(BaseItem item)
@@ -196,7 +196,7 @@ public abstract class TagExtractor<TItem>
         var output = ExtractEntriesFromFile(item, "stream=index,specifier : stream_tags");
         var deserialized = JsonSerializer.Deserialize<
             Dictionary<string, List<StreamTags>>>(output, _jsonSerializerOptions);
-        return deserialized?["streams"];
+        return deserialized?.GetValueOrDefault("streams");
     }
 
     private string ExtractEntriesFromFile(BaseItem item, string entries)
