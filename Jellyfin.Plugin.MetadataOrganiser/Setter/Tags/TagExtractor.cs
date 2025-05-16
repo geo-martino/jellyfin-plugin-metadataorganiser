@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.Json;
 using Jellyfin.Plugin.MetadataOrganiser.Core;
 using MediaBrowser.Controller.Entities;
+using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Model.Entities;
 using Microsoft.Extensions.Logging;
@@ -80,6 +81,64 @@ public abstract class TagExtractor<TItem>
         { "rating", (item.CriticRating / 20)?.ToString(CultureInfo.InvariantCulture) },
         { "keywords", string.Join(TagArraySeparator, item.Tags) }
     }.Append(ProcessedTag).FilterNotNullOrEmpty();
+
+    /// <summary>
+    /// Generate a show's series tags.
+    /// </summary>
+    /// <param name="item">The series to generate tags for.</param>
+    /// <returns>The generated tags.</returns>
+    protected static IEnumerable<KeyValuePair<string, string?>> FormatSeriesTags(Series item) =>
+    [
+        new("show", item.Name)
+    ];
+
+    /// <summary>
+    /// Generate a season's series tags.
+    /// </summary>
+    /// <param name="item">The season to generate tags for.</param>
+    /// <returns>The generated tags.</returns>
+    protected static IEnumerable<KeyValuePair<string, string?>> FormatSeriesTags(Season item) =>
+        FormatSeriesTags(item.Series);
+
+    /// <summary>
+    /// Generate an episode's series tags.
+    /// </summary>
+    /// <param name="item">The episode to generate tags for.</param>
+    /// <returns>The generated tags.</returns>
+    protected static IEnumerable<KeyValuePair<string, string?>> FormatSeriesTags(Episode item) =>
+        FormatSeriesTags(item.Series);
+
+    /// <summary>
+    /// Generate a season's tags.
+    /// </summary>
+    /// <param name="item">The season to generate tags for.</param>
+    /// <returns>The generated tags.</returns>
+    protected static IEnumerable<KeyValuePair<string, string?>> FormatSeasonTags(Season item) =>
+    [
+        new("season_number", item.IndexNumber?.ToString(CultureInfo.InvariantCulture)),
+        new("season_total", item.Series?.Children?.OfType<Season>()
+            .Max(season => season.IndexNumber)?.ToString(CultureInfo.InvariantCulture) ?? "0")
+    ];
+
+    /// <summary>
+    /// Generate an episode's season tags.
+    /// </summary>
+    /// <param name="item">The episode to generate tags for.</param>
+    /// <returns>The generated tags.</returns>
+    protected static IEnumerable<KeyValuePair<string, string?>> FormatSeasonTags(Episode item) =>
+        FormatSeasonTags(item.Season);
+
+    /// <summary>
+    /// Generate an episode's tags.
+    /// </summary>
+    /// <param name="item">The episode to generate tags for.</param>
+    /// <returns>The generated tags.</returns>
+    protected static IEnumerable<KeyValuePair<string, string?>> FormatEpisodeTags(Episode item) =>
+    [
+        new("episode_number", item.IndexNumber?.ToString(CultureInfo.InvariantCulture)),
+        new("episode_total", item.Season?.Children?.OfType<Episode>()
+            .Max(episode => episode.IndexNumber)?.ToString(CultureInfo.InvariantCulture) ?? "0")
+    ];
 
     /// <summary>
     /// Gets a map of format tags to be replaced in the given item.

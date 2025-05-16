@@ -17,7 +17,9 @@ namespace Jellyfin.Plugin.MetadataOrganiser.Setter;
 public class SetShowMetadataTask : MetadataTask
 {
     private readonly IApplicationPaths _appPaths;
-    private readonly ShowLibraryProcessor _libraryProcessor;
+    private readonly SeriesLibraryProcessor _seriesLibraryProcessor;
+    private readonly SeasonLibraryProcessor _seasonLibraryProcessor;
+    private readonly EpisodeLibraryProcessor _episodeLibraryProcessor;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SetShowMetadataTask"/> class.
@@ -32,11 +34,28 @@ public class SetShowMetadataTask : MetadataTask
         IConfigurationManager config,
         ILoggerFactory loggerFactory)
     {
-        var loggerProcessor = loggerFactory.CreateLogger<ShowLibraryProcessor>();
-        var loggerExtractor = loggerFactory.CreateLogger<EpisodeTagExtractor>();
-
         _appPaths = config.CommonApplicationPaths;
-        _libraryProcessor = new ShowLibraryProcessor(libraryManager, encoder, config, loggerProcessor, loggerExtractor);
+
+        _seriesLibraryProcessor = new SeriesLibraryProcessor(
+            libraryManager,
+            encoder,
+            config,
+            loggerFactory.CreateLogger<SeriesLibraryProcessor>(),
+            loggerFactory.CreateLogger<SeriesTagExtractor>());
+
+        _seasonLibraryProcessor = new SeasonLibraryProcessor(
+            libraryManager,
+            encoder,
+            config,
+            loggerFactory.CreateLogger<SeasonLibraryProcessor>(),
+            loggerFactory.CreateLogger<SeasonTagExtractor>());
+
+        _episodeLibraryProcessor = new EpisodeLibraryProcessor(
+            libraryManager,
+            encoder,
+            config,
+            loggerFactory.CreateLogger<EpisodeLibraryProcessor>(),
+            loggerFactory.CreateLogger<EpisodeTagExtractor>());
     }
 
     /// <inheritdoc />
@@ -68,14 +87,29 @@ public class SetShowMetadataTask : MetadataTask
         var dropStreamTagsOnName = MetadataOrganiserPlugin.Instance.Configuration.DropStreamTagsOnItemName
             .SplitArguments().ToArray();
 
-        var progressHandler = new ProgressHandler(progress, 5, 100);
-        await _libraryProcessor.SetMetadata(
+        await _episodeLibraryProcessor.SetMetadata(
             dropStreamTags,
             dropStreamTagsOnName,
             tagMapPath,
             dryRun,
             force,
-            progressHandler,
+            new ProgressHandler(progress, 0, 80),
+            cancellationToken).ConfigureAwait(false);
+        await _seasonLibraryProcessor.SetMetadata(
+            dropStreamTags,
+            dropStreamTagsOnName,
+            tagMapPath,
+            dryRun,
+            force,
+            new ProgressHandler(progress, 80, 90),
+            cancellationToken).ConfigureAwait(false);
+        await _seriesLibraryProcessor.SetMetadata(
+            dropStreamTags,
+            dropStreamTagsOnName,
+            tagMapPath,
+            dryRun,
+            force,
+            new ProgressHandler(progress, 90, 100),
             cancellationToken).ConfigureAwait(false);
 
         progress.Report(100);

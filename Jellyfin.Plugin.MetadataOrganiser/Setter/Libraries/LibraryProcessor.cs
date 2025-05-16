@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -123,13 +122,10 @@ public abstract class LibraryProcessor<TItem, TExtractor>
 
         foreach (var it in items)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return;
-            }
+            cancellationToken.ThrowIfCancellationRequested();
 
             progressHandler.Progress(it.Index, items.Length);
-            if (!force && Extractor.ItemHasBeenProcessed(it.Item))
+            if (!it.Item.IsFolder && !force && Extractor.ItemHasBeenProcessed(it.Item))
             {
                 continue;
             }
@@ -137,13 +133,19 @@ public abstract class LibraryProcessor<TItem, TExtractor>
             try
             {
                 await SetMetadataOnItem(
-                        it.Item, dropStreamTags, dropStreamTagsOnValue, tagMap, dryRun,  cancellationToken)
+                        it.Item, dropStreamTags, dropStreamTagsOnValue, tagMap, force, dryRun, cancellationToken)
                     .ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Failed to set metadata for item {Item}", it.Item);
             }
+        }
+
+        var transcodeDirectory = GetTranscodeDirectory();
+        if (Directory.Exists(transcodeDirectory))
+        {
+            Directory.Delete(transcodeDirectory, true);
         }
 
         progressHandler.SetProgressToFinal();
@@ -154,56 +156,66 @@ public abstract class LibraryProcessor<TItem, TExtractor>
         IReadOnlyCollection<string> dropStreamTags,
         IReadOnlyCollection<string> dropStreamTagsOnValue,
         IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> tagMap,
+        bool force,
         bool dryRun,
         CancellationToken cancellationToken) => await SetMetadataOnItem(
         item,
-        Extractor.FormatTags(item),
+        Extractor.FormatTags(item).ToArray(),
         dropStreamTags,
         dropStreamTagsOnValue,
         GetTagDropValue(item),
         tagMap,
+        force,
         dryRun,
         cancellationToken).ConfigureAwait(false);
 
     private async Task SetMetadataOnItem(
         BaseItem item,
-        IEnumerable<KeyValuePair<string, string>> formatTags,
+        IReadOnlyCollection<KeyValuePair<string, string>> formatTags,
         IReadOnlyCollection<string> dropStreamTags,
         IReadOnlyCollection<string> dropStreamTagsOnValue,
         string dropOnValue,
         IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> tagMap,
+        bool force,
         bool dryRun,
         CancellationToken cancellationToken)
     {
-        var streamTags = Extractor
-            .GetDropStreamTags(item, dropOnValue, dropStreamTagsOnValue)
-            .Select(pair => new KeyValuePair<MediaStream, IEnumerable<KeyValuePair<string, string>>>(
-                pair.Key, pair.Value.Concat(dropStreamTags.MapTagsToValue(string.Empty))))
-            .ToDictionary(pair => pair.Key, pair => pair.Value.ToDictionary().AsReadOnly()).AsReadOnly()
-            .Concat(Extractor.GetMappedStreamTagValues(item, tagMap));
+        if (!item.IsFolder)
+        {
+            var streamTags = Extractor
+                .GetDropStreamTags(item, dropOnValue, dropStreamTagsOnValue)
+                .Select(pair => new KeyValuePair<MediaStream, IEnumerable<KeyValuePair<string, string>>>(
+                    pair.Key, pair.Value.Concat(dropStreamTags.MapTagsToValue(string.Empty))))
+                .ToDictionary(pair => pair.Key, pair => pair.Value.ToDictionary().AsReadOnly()).AsReadOnly()
+                .Concat(Extractor.GetMappedStreamTagValues(item, tagMap));
 
-        var transcodePath = await EncodeMetadata(item, formatTags.KeysToUpper(), streamTags, dryRun, cancellationToken)
-            .ConfigureAwait(false);
-        MoveFile(transcodePath, item.Path, dryRun);
+            var transcodePath = await EncodeMetadata(item, formatTags.KeysToUpper(), streamTags, dryRun, cancellationToken)
+                .ConfigureAwait(false);
+
+            MoveFile(transcodePath, item.Path, dryRun);
+        }
 
         foreach (var extra in item.GetExtras())
         {
+            if (!force && Extractor.ItemHasBeenProcessed(extra))
+            {
+                continue;
+            }
+
+            var extraFormatTags = Extractor.FormatTags(extra).ToDictionary();
+            var itemFormatTags = formatTags.Where(
+                tag => !extraFormatTags.ContainsKey(tag.Key));
             await SetMetadataOnItem(
                     extra,
-                    Extractor.FormatTags(extra),
+                    extraFormatTags.Concat(itemFormatTags).ToArray(),
                     dropStreamTags,
                     dropStreamTagsOnValue,
                     dropOnValue,
                     tagMap,
+                    force,
                     dryRun,
                     cancellationToken)
                 .ConfigureAwait(false);
-        }
-
-        var transcodeDirectory = GetTranscodeDirectory();
-        if (Directory.Exists(transcodeDirectory))
-        {
-            Directory.Delete(transcodeDirectory, true);
         }
     }
 
