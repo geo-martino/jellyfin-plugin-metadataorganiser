@@ -43,9 +43,13 @@ public class LibraryProcessor
     /// Gets the items to process from the library.
     /// </summary>
     /// <returns>The items to process.</returns>
-    private List<BaseItem> GetItems() => LibraryManager
+    private IReadOnlyList<BaseItem> GetItems() => LibraryManager
         .GetItemList(new InternalItemsQuery
         {
+            IncludeItemTypes = [
+                BaseItemKind.Audio,
+                BaseItemKind.Video,
+            ],
             IsVirtualItem = false,
             Recursive = true
         });
@@ -54,7 +58,7 @@ public class LibraryProcessor
     /// Gets the splittable items from the library.
     /// </summary>
     /// <returns>The items to process.</returns>
-    private List<BaseItem> GetSplittableItems() => LibraryManager
+    private IReadOnlyList<BaseItem> GetSplittableItems() => LibraryManager
         .GetItemList(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.Genre, BaseItemKind.Studio],

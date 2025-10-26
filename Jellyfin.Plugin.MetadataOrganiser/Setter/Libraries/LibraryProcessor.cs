@@ -1,3 +1,5 @@
+namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Libraries;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,8 +17,6 @@ using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
 using MediaBrowser.Model.Entities;
 using Microsoft.Extensions.Logging;
-
-namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Libraries;
 
 /// <summary>
 /// Processes metadata across a library containing items of type <typeparamref name="TItem"/>.
@@ -44,12 +44,12 @@ public abstract class LibraryProcessor<TItem, TExtractor>
         TExtractor tagExtractor,
         ILogger<LibraryProcessor<TItem, TExtractor>> logger)
     {
-        LibraryManager = libraryManager;
-        Encoder = encoder;
-        Config = config;
+        this.LibraryManager = libraryManager;
+        this.Encoder = encoder;
+        this.Config = config;
 
-        Extractor = tagExtractor;
-        Logger = logger;
+        this.Extractor = tagExtractor;
+        this.Logger = logger;
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public abstract class LibraryProcessor<TItem, TExtractor>
         ProgressHandler progressHandler,
         CancellationToken cancellationToken)
     {
-        var items = GetItems().Select((item, idx) => new { Item = item, Index = idx }).ToArray();
+        var items = this.GetItems().Select((item, idx) => new { Item = item, Index = idx }).ToArray();
         progressHandler.SetProgressToInitial();
 
         Logger.LogInformation("Removing all stream tags: {0:l}", string.Join(", ", dropStreamTags));
@@ -265,7 +265,7 @@ public abstract class LibraryProcessor<TItem, TExtractor>
         var process = new Process
         {
             StartInfo = processStartInfo,
-            EnableRaisingEvents = true
+            EnableRaisingEvents = true,
         };
 
         process.Start();
@@ -280,7 +280,7 @@ public abstract class LibraryProcessor<TItem, TExtractor>
         IEnumerable<KeyValuePair<MediaStream, ReadOnlyDictionary<string, string>>> streamTags) =>
             new List<string>
                 {
-                    "-loglevel", "warning", "-i", $"file:\"{item.Path}\"", "-map", "0", "-map_metadata:g", "-1"
+                    "-loglevel", "warning", "-i", $"file:\"{item.Path}\"", "-map", "0", "-map_metadata:g", "-1",
                 }
                 .Concat(item.GetMediaStreams().SelectMany(GetStreamMapArg))
                 .Concat(["-c", "copy"])

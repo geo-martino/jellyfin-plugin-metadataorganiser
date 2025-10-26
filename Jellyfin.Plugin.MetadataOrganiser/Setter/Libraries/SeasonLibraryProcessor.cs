@@ -1,7 +1,10 @@
+namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Libraries;
+
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Jellyfin.Data.Enums;
+using Jellyfin.Database.Implementations.Enums;
 using Jellyfin.Plugin.MetadataOrganiser.Setter.Tags;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Controller.Entities;
@@ -9,8 +12,6 @@ using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Controller.MediaEncoding;
 using Microsoft.Extensions.Logging;
-
-namespace Jellyfin.Plugin.MetadataOrganiser.Setter.Libraries;
 
 /// <inheritdoc />
 public class SeasonLibraryProcessor : LibraryProcessor<Season, TagExtractor<Season>>
@@ -27,16 +28,16 @@ public class SeasonLibraryProcessor : LibraryProcessor<Season, TagExtractor<Seas
     }
 
     /// <inheritdoc />
-    protected override IEnumerable<Season> GetItems() => LibraryManager
+    protected override IEnumerable<Season> GetItems() => this.LibraryManager
         .GetItemList(new InternalItemsQuery
         {
             IncludeItemTypes = [BaseItemKind.Season],
             IsVirtualItem = false,
             OrderBy = new List<(ItemSortBy, SortOrder)>
             {
-                new(ItemSortBy.SortName, SortOrder.Ascending)
+                new(ItemSortBy.SortName, SortOrder.Ascending),
             },
-            Recursive = true
+            Recursive = true,
         }).OfType<Season>().Where(season => Directory.Exists(season.Path));
 
     /// <inheritdoc />
