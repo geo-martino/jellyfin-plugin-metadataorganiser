@@ -1,11 +1,18 @@
 # Jellyfin Metadata Organiser Plugin
 
-[![Code Size](https://img.shields.io/github/languages/code-size/geo-martino/jellyfin-plugin-metadataorganiser?label=Code%20Size)](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser)
-[![Contributors](https://img.shields.io/github/contributors/geo-martino/jellyfin-plugin-metadataorganiser?logo=github&label=Contributors)](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/graphs/contributors)
-[![License](https://img.shields.io/github/license/geo-martino/jellyfin-plugin-metadataorganiser?label=License)](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/blob/master/LICENSE)
-</br>
-[![GitHub - Validate](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/validate.yml/badge.svg?branch=master)](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/validate.yml)
-[![GitHub - Deployment](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/deploy.yml/badge.svg?event=release)](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/deploy.yml)
-[![GitHub - Documentation](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/docs_publish.yml/badge.svg)](https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/docs_publish.yml)
+<div align="center">
+    <p>
+        <img alt="Logo" src="https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-metadataorganiser/master/images/logo.png" height="350"/>
+    <br>
+        <a href="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/releases"><img alt="Total GitHub Downloads" src="https://img.shields.io/github/downloads/geo-martino/jellyfin-plugin-metadataorganiser/total"/></img></a>
+        <a href="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/issues"><img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/geo-martino/jellyfin-plugin-metadataorganiser"/></img></a>
+        <a href="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/releases"><img alt="Build and Release" src="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/actions/workflows/deploy.yml/badge.svg"/></img></a>
+        <a href="https://jellyfin.org/"><img alt="Jellyfin Version" src="https://img.shields.io/badge/Jellyfin-10.11-blue.svg"/></img></a>
+    <br>
+        <a href="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser"><img alt="Code Size" src="https://img.shields.io/github/languages/code-size/geo-martino/jellyfin-plugin-metadataorganiser?label=Code%20Size"/></img></a>
+        <a href="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/geo-martino/jellyfin-plugin-metadataorganiser?logo=github&label=Contributors"/></img></a>
+        <a href="https://github.com/geo-martino/jellyfin-plugin-metadataorganiser/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/github/license/geo-martino/jellyfin-plugin-metadataorganiser?label=License"/></img></a>
+    </p>
+</div>
 
 This plugin automatically handles assignment of metadata to files and modifying metadata read from files. 
