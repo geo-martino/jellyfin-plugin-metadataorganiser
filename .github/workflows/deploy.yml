@@ -1,0 +1,76 @@
+name: "🚀 Deploy package to manifest   "
+run-name: "🚀 Deploy package to manifest: ${{ github.ref_name }}"
+
+on:
+  release:
+    types: [ published ]
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 🏗️ Build and release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      plugin-id: ${{ steps.build.outputs.plugin-id }}
+      plugin-version: ${{ steps.build.outputs.plugin-version }}
+      abi-version: ${{ steps.build.outputs.abi-version }}
+      artifact-name: ${{ steps.build.outputs.artifact-name }}
+      artifact-checksum: ${{ steps.build.outputs.artifact-checksum }}
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🛒 Checkout actions
+        uses: actions/checkout@v3
+        with:
+          repository: geo-martino/jellyfin-plugin-repository
+          path: repository/
+          sparse-checkout: ./.github/actions/
+
+      - name: 📦 Update release with package artifact
+        id: build
+        uses: ./repository/.github/actions/build-plugin
+        with:
+          dotnet-version: "9.0.x"
+          project-dir: "Jellyfin.Plugin.MetadataOrganiser"
+          logo-file: "images/logo.jpg"
+          is-release: true
+
+  update-manifest:
+    name: 📝 Update manifest
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    environment: update-manifest
+    steps:
+      - name: 🛒 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🛒 Checkout actions
+        uses: actions/checkout@v3
+        with:
+          repository: geo-martino/jellyfin-plugin-repository
+          path: repository/
+          sparse-checkout: ./.github/actions/
+
+      - name: 📝 Update manifest
+        uses: ./repository/.github/actions/update-manifest
+        with:
+          name: "Metadata Organiser"
+          overview: "Automatically handle assignment and reading of metadata to/from files"
+          description: "This plugin automatically handles assignment of metadata to files and modifying metadata read from files."
+          category: "File Administration"
+          plugin-id: ${{ needs.build.outputs.plugin-id }}
+          plugin-version: ${{ needs.build.outputs.plugin-version }}
+          abi-version: ${{ needs.build.outputs.abi-version }}
+          artifact-name: ${{ needs.build.outputs.artifact-name }}
+          artifact-checksum: ${{ needs.build.outputs.artifact-checksum }}
+          image-file: "images/logo.jpg"
+          github-token: "${{ secrets.GH_TOKEN }}"
