@@ -17,6 +17,15 @@
 
 This plugin automatically handles assignment of metadata to files and modifying metadata read from files. 
 
+## 📦 How to Install
+
+1. Add this repository URL to your Jellyfin plugin catalog:
+```
+https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-repository/master/manifest.json
+```
+2. Install the plugin
+3. Restart Jellyfin
+
 ## Configuration
 
 You may configure the plugin via the Jellyfin UI by going to the plugin's settings page. You will be able to configure from the options as shown below.
