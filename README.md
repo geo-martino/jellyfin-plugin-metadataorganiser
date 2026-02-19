@@ -19,10 +19,10 @@ This plugin automatically handles assignment of metadata to files and modifying 
 
 ## ✨ Features
 
-- Dynamic Metadata Modification: Embed Jellyfin metadata to directly to files on the filsystem.
-- Embedded Metadata Stripping: Option to ignore or remove specific embedded metadata fields (like "Comment" or "Encoder").
-- Manual Metadata Remapping: Option to provide an additional manual mapping file to remap embedded metadata as needed. 
-- Scheduled Metadata Refresh: Integration with Jellyfin's Scheduled Tasks to periodically re-evaluate and "fix" metadata for newly added or changed items.
+- **Dynamic Metadata Modification**: Embed Jellyfin metadata to directly to files on the filsystem.
+- **Embedded Metadata Stripping**: Option to ignore or remove specific embedded metadata fields (like "Comment" or "Encoder").
+- **Manual Metadata Remapping**: Option to provide an additional manual mapping file to remap embedded metadata as needed. 
+- **Scheduled Metadata Refresh**: Integration with Jellyfin's Scheduled Tasks to periodically re-evaluate and "fix" metadata for newly added or changed items.
 
 ## Configuration
 
