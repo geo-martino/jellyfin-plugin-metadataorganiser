@@ -23,7 +23,7 @@ You may configure the plugin via the Jellyfin UI by going to the plugin's settin
 
 <div align="center">
     <p>
-        <img alt="Configuration page 1" src="https://raw.githubusercontent.com/jyourstone/jellyfin-musictags-plugin/master/images/config_1.png" width="600"/>
-        <img alt="Configuration page 2" src="https://raw.githubusercontent.com/jyourstone/jellyfin-musictags-plugin/master/images/config_2.png" width="600"/>
+        <img alt="Configuration page 1" src="https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-metadataorganiser/master/images/config_1.png" width="600"/>
+        <img alt="Configuration page 2" src="https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-metadataorganiser/master/images/config_2.png" width="600"/>
     </p>
 </div>
