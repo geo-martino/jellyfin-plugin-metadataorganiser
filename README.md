@@ -17,14 +17,12 @@
 
 This plugin automatically handles assignment of metadata to files and modifying metadata read from files. 
 
-## 📦 How to Install
+## ✨ Features
 
-1. Add this repository URL to your Jellyfin plugin catalog:
-```
-https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-repository/master/manifest.json
-```
-2. Install the plugin
-3. Restart Jellyfin
+- Dynamic Metadata Modification: Embed Jellyfin metadata to directly to files on the filsystem.
+- Embedded Metadata Stripping: Option to ignore or remove specific embedded metadata fields (like "Comment" or "Encoder").
+- Manual Metadata Remapping: Option to provide an additional manual mapping file to remap embedded metadata as needed. 
+- Scheduled Metadata Refresh: Integration with Jellyfin's Scheduled Tasks to periodically re-evaluate and "fix" metadata for newly added or changed items.
 
 ## Configuration
 
@@ -36,3 +34,15 @@ You may configure the plugin via the Jellyfin UI by going to the plugin's settin
         <img alt="Configuration page 2" src="https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-metadataorganiser/master/images/config_2.png" width="600"/>
     </p>
 </div>
+
+## 📦 How to Install
+
+1. Add this repository URL to your Jellyfin plugin catalog:
+```
+https://raw.githubusercontent.com/geo-martino/jellyfin-plugin-repository/master/manifest.json
+```
+2. Install the plugin
+3. Restart Jellyfin
+
+## 🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
