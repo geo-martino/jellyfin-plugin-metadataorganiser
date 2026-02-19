@@ -16,3 +16,14 @@
 </div>
 
 This plugin automatically handles assignment of metadata to files and modifying metadata read from files. 
+
+## Configuration
+
+You may configure the plugin via the Jellyfin UI by going to the plugin's settings page. You will be able to configure from the options as shown below.
+
+<div align="center">
+    <p>
+        <img alt="Configuration page 1" src="https://raw.githubusercontent.com/jyourstone/jellyfin-musictags-plugin/master/images/config_1.png" width="600"/>
+        <img alt="Configuration page 2" src="https://raw.githubusercontent.com/jyourstone/jellyfin-musictags-plugin/master/images/config_2.png" width="600"/>
+    </p>
+</div>
